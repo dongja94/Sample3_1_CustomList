@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by dongja94 on 2016-04-20.
  */
-public class PersonAdapter extends BaseAdapter {
+public class PersonAdapter extends BaseAdapter implements PersonView.OnImageClickListener {
 
     List<Person> items = new ArrayList<Person>();
 
@@ -54,10 +54,33 @@ public class PersonAdapter extends BaseAdapter {
         PersonView view;
         if (convertView == null) {
             view = new PersonView(parent.getContext());
+            view.setOnImageClickListener(this);
         } else {
             view = (PersonView)convertView;
         }
         view.setPerson(items.get(position));
+        view.setOnImageClickListener(imageClickListener);
         return view;
+    }
+
+    PersonView.OnImageClickListener imageClickListener;
+    public void setOnImageClickListener(PersonView.OnImageClickListener listener) {
+        imageClickListener = listener;
+    }
+
+    @Override
+    public void onImageClick(PersonView view, Person person) {
+        if (mListener != null) {
+            mListener.onItemImageClick(this, view, person);
+        }
+    }
+
+    public interface OnAdapterItemClickListener {
+        public void onItemImageClick(PersonAdapter apdater, PersonView view, Person person);
+    }
+
+    OnAdapterItemClickListener mListener;
+    public void setOnAdapterItemClickListener(OnAdapterItemClickListener listener) {
+        mListener = listener;
     }
 }
